@@ -8,6 +8,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=PT+Mono&display=swap" rel="stylesheet">
+  
+  <!-- html2pdf library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
   <style>
     :root {
@@ -248,6 +251,38 @@
       font-size: 1.15rem;
     }
 
+    /* Export Button Styles */
+    .export-container {
+      display: flex;
+      justify-content: center;
+      margin-top: 32px;
+    }
+
+    .btn-export {
+      background-color: var(--primary);
+      color: #ffffff;
+      border: none;
+      padding: 12px 28px;
+      font-size: 1rem;
+      font-weight: 700;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.2s, transform 0.1s, box-shadow 0.2s;
+      box-shadow: 0 4px 6px -1px rgba(30, 58, 138, 0.2);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-export:hover {
+      background-color: var(--accent);
+      box-shadow: 0 6px 8px -1px rgba(2, 132, 199, 0.3);
+    }
+
+    .btn-export:active {
+      transform: scale(0.98);
+    }
+
     footer {
       margin-top: 24px;
       text-align: center;
@@ -459,12 +494,23 @@
     </div>
   </div>
 
+  <div class="export-container" id="exportContainer">
+    <button id="exportPdfBtn" class="btn-export">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+        <polyline points="7 10 12 15 17 10"></polyline>
+        <line x1="12" y1="15" x2="12" y2="3"></line>
+      </svg>
+      Export to PDF
+    </button>
+  </div>
+
   <footer>
     <p>Pre-Funded Investment Return Model</p>
   </footer>
 </div>
 
-  <script>
+<script>
   let computedInflowDate = new Date();
   let computedObligationDate = new Date();
 
@@ -627,6 +673,31 @@
       if (!isNaN(newOutflow.getTime())) {
         updateAprilDates(newOutflow);
       }
+    });
+
+    // PDF Export Logic
+    document.getElementById('exportPdfBtn').addEventListener('click', () => {
+      const container = document.querySelector('.container');
+      const exportContainer = document.getElementById('exportContainer');
+      
+      // Temporarily hide the button row
+      exportContainer.style.display = 'none';
+
+      const opt = {
+        margin:       [0.5, 0.5, 0.5, 0.5],
+        filename:     'investment-return-model.pdf',
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { scale: 2, useCORS: true },
+        jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+      };
+
+      // Generate PDF and restore the button
+      html2pdf().set(opt).from(container).save().then(() => {
+        exportContainer.style.display = 'flex';
+      }).catch(err => {
+        console.error('PDF Export Error:', err);
+        exportContainer.style.display = 'flex'; // Ensure it comes back on error
+      });
     });
 
     calculate();
