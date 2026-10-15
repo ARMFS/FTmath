@@ -4,44 +4,46 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
   <title>Pre-Funded Return Calculator</title>
-  <!-- Google Font: PT Mono -->
+  
+  <!-- Google Fonts: Inter for text, Roboto Mono for numbers -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=PT+Mono&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
   
   <!-- html2pdf library -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
   <style>
     :root {
-      --primary: #1e3a8a;
-      --primary-light: #eff6ff;
-      --accent: #0284c7;
-      --text: #1f2937;
-      --bg: #f8fafc;
-      --card-bg: #ffffff;
-      --border: #cbd5e1;
-      --success: #15803d;
-      --success-bg: #f0fdf4;
+      /* Corporate Financial Palette */
+      --primary: #0f172a;       /* Dark slate/navy for headers */
+      --secondary: #1e293b;     /* Slightly lighter slate */
+      --accent: #2563eb;        /* Professional blue for highlights/buttons */
+      --text: #334155;          /* Main text color */
+      --text-muted: #64748b;    /* Subtitles and labels */
+      --bg: #f8fafc;            /* Page background */
+      --card-bg: #ffffff;       /* Card background */
+      --border: #e2e8f0;        /* Crisp, subtle borders */
+      --success: #15803d;       /* Professional green */
     }
 
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: 'PT Mono', monospace;
     }
 
     html, body {
       width: 100%;
       overflow-x: hidden;
+      font-family: 'Inter', sans-serif;
     }
 
     body {
       background-color: var(--bg);
       color: var(--text);
       line-height: 1.5;
-      padding: 24px 16px;
+      padding: 32px 16px;
       display: flex;
       justify-content: center;
       align-items: flex-start;
@@ -49,70 +51,81 @@
     }
 
     .container {
-      max-width: 960px;
+      max-width: 1000px;
       width: 100%;
       margin: 0 auto;
     }
 
     header {
-      margin-bottom: 24px;
+      margin-bottom: 32px;
       text-align: center;
       padding: 0 8px;
     }
 
     header h1 {
       color: var(--primary);
-      font-size: 1.6rem;
+      font-size: 1.8rem;
       font-weight: 700;
+      letter-spacing: -0.02em;
     }
 
     header p {
-      color: #64748b;
-      font-size: 0.875rem;
-      margin-top: 4px;
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      margin-top: 6px;
+      font-weight: 400;
     }
 
+    /* Grid configuration for equal height columns */
     .grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 24px;
       width: 100%;
+      align-items: stretch; /* Forces equal height */
     }
 
     .card {
       background: var(--card-bg);
-      border-radius: 12px;
-      padding: 24px;
+      border-radius: 8px;
+      padding: 28px;
       border: 1px solid var(--border);
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.05);
       width: 100%;
       min-width: 0;
+      display: flex;
+      flex-direction: column;
+      height: 100%; /* Take up full stretched height */
     }
 
-    /* Bold PT Mono Card Titles */
     .card h2 {
-      font-size: 1.1rem;
+      font-size: 1.15rem;
       color: var(--primary);
-      margin-bottom: 18px;
-      padding-bottom: 8px;
-      border-bottom: 2px solid var(--primary-light);
-      font-weight: 700;
+      margin-bottom: 24px;
+      padding-bottom: 12px;
+      border-bottom: 2px solid var(--primary);
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      text-transform: uppercase;
     }
 
     .section-title {
-      font-size: 0.8rem;
+      font-size: 0.75rem;
       font-weight: 700;
       text-transform: uppercase;
-      color: #64748b;
-      margin-top: 12px;
-      margin-bottom: 8px;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-top: 16px;
+      margin-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 4px;
     }
 
     .input-row {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      margin-bottom: 14px;
+      gap: 16px;
+      margin-bottom: 16px;
       width: 100%;
     }
 
@@ -123,62 +136,54 @@
     }
 
     .form-group label {
-      font-size: 0.775rem;
-      font-weight: 600;
-      color: #475569;
-      margin-bottom: 4px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--secondary);
+      margin-bottom: 6px;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
 
-    /* Standardized Input Sizing & iOS Height Fix */
+    /* Standardized Input Sizing */
     .form-group input {
       width: 100%;
       min-width: 0;
-      height: 38px;
-      padding: 0 11px;
+      height: 40px;
+      padding: 0 12px;
       border: 1px solid var(--border);
-      border-radius: 6px;
-      font-size: 0.875rem;
-      color: var(--text);
+      border-radius: 4px;
+      font-size: 0.9rem;
+      color: var(--primary);
       background-color: #fff;
-      transition: border-color 0.2s;
+      transition: all 0.2s;
+      font-family: 'Roboto Mono', monospace; /* Monospace for numbers */
       -webkit-appearance: none;
       appearance: none;
-      line-height: normal;
     }
 
-    /* Prevent iOS Safari Double-Height Date Input */
     input[type="date"] {
       -webkit-appearance: none;
       appearance: none;
-      height: 38px;
-      line-height: 38px;
-    }
-
-    input[type="date"]::-webkit-date-and-time-value {
-      text-align: left;
-      min-height: 1.2em;
-      margin: 0;
-      padding: 0;
+      height: 40px;
+      line-height: normal;
     }
 
     .form-group input:focus {
       outline: none;
       border-color: var(--accent);
-      box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
     }
 
     .checkbox-group {
       display: flex;
       align-items: center;
-      gap: 10px;
-      padding: 12px;
-      background-color: var(--primary-light);
-      border-radius: 8px;
-      margin-top: 16px;
-      border: 1px solid #bfdbfe;
+      gap: 12px;
+      padding: 16px;
+      background-color: #f8fafc;
+      border-radius: 6px;
+      margin-top: 24px;
+      border: 1px solid var(--border);
       width: 100%;
     }
 
@@ -187,19 +192,22 @@
       height: 18px;
       min-width: 18px;
       cursor: pointer;
+      accent-color: var(--accent);
     }
 
     .checkbox-group label {
-      font-size: 0.775rem;
-      font-weight: 600;
+      font-size: 0.85rem;
+      font-weight: 500;
       color: var(--primary);
       cursor: pointer;
     }
 
+    /* Results List Styling (Even Distribution) */
     .results-list {
       display: flex;
       flex-direction: column;
-      gap: 14px;
+      flex-grow: 1; /* Take remaining space in the card */
+      justify-content: space-between; /* Distribute items evenly */
       width: 100%;
     }
 
@@ -207,48 +215,60 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 12px 14px;
-      border-radius: 8px;
-      background-color: #f1f5f9;
-      gap: 12px;
+      padding: 16px 0;
+      border-bottom: 1px solid var(--border);
+      gap: 16px;
       min-width: 0;
     }
 
-    .result-item.highlight {
-      background-color: var(--primary-light);
-      border: 1px solid #bfdbfe;
+    .result-item:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
     }
 
-    .result-item.highlight-green {
-      background-color: var(--success-bg);
-      border: 1px solid #bbf7d0;
+    .result-item:first-child {
+      padding-top: 0;
+    }
+
+    /* Subtler highlights instead of pastel boxes */
+    .result-item.highlight .result-label {
+      color: var(--primary);
+      font-weight: 700;
+    }
+    
+    .result-item.highlight .result-value {
+      font-weight: 700;
     }
 
     .result-label {
-      font-size: 0.8rem;
-      color: #334155;
-      font-weight: 600;
+      font-size: 0.85rem;
+      color: var(--secondary);
+      font-weight: 500;
       min-width: 0;
+      line-height: 1.4;
     }
 
     .result-label small {
       display: block;
-      color: #64748b;
-      font-size: 0.7rem;
-      font-weight: normal;
+      color: var(--text-muted);
+      font-size: 0.75rem;
+      font-weight: 400;
+      margin-top: 2px;
     }
 
     .result-value {
-      font-size: 1rem;
-      font-weight: 700;
+      font-size: 1.05rem;
+      font-weight: 600;
       color: var(--primary);
       white-space: nowrap;
       text-align: right;
+      font-family: 'Roboto Mono', monospace; /* Monospace for numbers */
     }
 
     .result-item.highlight-green .result-value {
       color: var(--success);
       font-size: 1.15rem;
+      font-weight: 700;
     }
 
     /* Export Button Styles */
@@ -261,22 +281,23 @@
     .btn-export {
       background-color: var(--primary);
       color: #ffffff;
-      border: none;
-      padding: 12px 28px;
-      font-size: 1rem;
-      font-weight: 700;
-      border-radius: 8px;
+      border: 1px solid transparent;
+      padding: 10px 24px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      font-family: 'Inter', sans-serif;
+      border-radius: 6px;
       cursor: pointer;
-      transition: background-color 0.2s, transform 0.1s, box-shadow 0.2s;
-      box-shadow: 0 4px 6px -1px rgba(30, 58, 138, 0.2);
+      transition: all 0.2s ease;
       display: inline-flex;
       align-items: center;
       gap: 8px;
     }
 
     .btn-export:hover {
-      background-color: var(--accent);
-      box-shadow: 0 6px 8px -1px rgba(2, 132, 199, 0.3);
+      background-color: var(--card-bg);
+      color: var(--primary);
+      border: 1px solid var(--primary);
     }
 
     .btn-export:active {
@@ -284,83 +305,36 @@
     }
 
     footer {
-      margin-top: 24px;
+      margin-top: 32px;
       text-align: center;
-      font-size: 0.75rem;
-      color: #94a3b8;
+      font-size: 0.8rem;
+      color: var(--text-muted);
     }
 
     /* RESPONSIVE MEDIA QUERIES */
     @media (max-width: 768px) {
       body {
-        padding: 16px 8px;
-      }
-
-      header h1 {
-        font-size: 1.35rem;
-      }
-
-      header p {
-        font-size: 0.875rem;
-      }
-
-      .card h2 {
-        font-size: 1.05rem;
+        padding: 24px 16px;
       }
 
       .grid {
         grid-template-columns: 1fr;
-        gap: 16px;
-      }
-
-      .card {
-        padding: 16px 12px;
+        gap: 20px;
       }
     }
 
     @media (max-width: 480px) {
       body {
-        padding: 12px 4px;
-      }
-
-      header h1 {
-        font-size: 1.25rem;
+        padding: 16px 8px;
       }
 
       .card {
-        padding: 12px 10px;
+        padding: 20px 16px;
       }
 
       .input-row {
-        gap: 8px;
-        margin-bottom: 10px;
-      }
-
-      .form-group label {
-        font-size: 0.7rem;
-      }
-
-      .form-group input, input[type="date"] {
-        padding: 0 6px;
-        font-size: 0.78rem;
-        height: 34px;
-        line-height: 34px;
-      }
-
-      .result-item {
-        padding: 10px 10px;
-      }
-
-      .result-label {
-        font-size: 0.73rem;
-      }
-
-      .result-value {
-        font-size: 0.9rem;
-      }
-
-      .result-item.highlight-green .result-value {
-        font-size: 1.025rem;
+        grid-template-columns: 1fr;
+        gap: 12px;
       }
     }
   </style>
@@ -369,7 +343,6 @@
 
 <div class="container">
   <header>
-    <br/>
     <h1>Investment Calculator</h1>
     <p>Return modeling for FT investments</p>
   </header>
@@ -496,7 +469,7 @@
 
   <div class="export-container" id="exportContainer">
     <button id="exportPdfBtn" class="btn-export">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
         <polyline points="7 10 12 15 17 10"></polyline>
         <line x1="12" y1="15" x2="12" y2="3"></line>
@@ -517,7 +490,6 @@
   function initDefaults() {
     const today = new Date();
     document.getElementById('outflowDate').value = today.toISOString().split('T')[0];
-    // Removed updateAprilDates(today) to keep the hardcoded HTML default values on load
   }
 
   function updateAprilDates(dOutflow) {
@@ -534,7 +506,6 @@
     computedInflowDate = new Date(inflowYear, 3, 1);
     computedObligationDate = new Date(obligationYear, 3, 1);
 
-    // Format dates to YYYY-MM-DD for the input fields
     const formatDate = (date) => {
       return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
     };
@@ -680,7 +651,6 @@
       const container = document.querySelector('.container');
       const exportContainer = document.getElementById('exportContainer');
       
-      // Temporarily hide the button row
       exportContainer.style.display = 'none';
 
       const opt = {
@@ -691,12 +661,11 @@
         jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
       };
 
-      // Generate PDF and restore the button
       html2pdf().set(opt).from(container).save().then(() => {
         exportContainer.style.display = 'flex';
       }).catch(err => {
         console.error('PDF Export Error:', err);
-        exportContainer.style.display = 'flex'; // Ensure it comes back on error
+        exportContainer.style.display = 'flex';
       });
     });
 
