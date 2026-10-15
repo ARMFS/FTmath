@@ -504,9 +504,13 @@
     computedInflowDate = new Date(inflowYear, 3, 1);
     computedObligationDate = new Date(obligationYear, 3, 1);
 
-    const dateOptions = { month: 'short', day: 'numeric', year: 'numeric' };
-    document.getElementById('inflowDateText').innerText = computedInflowDate.toLocaleDateString('en-US', dateOptions);
-    document.getElementById('obligationDateText').innerText = computedObligationDate.toLocaleDateString('en-US', dateOptions);
+    // Format dates to YYYY-MM-DD for the input fields
+    const formatDate = (date) => {
+      return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+    };
+
+    document.getElementById('inflowDate').value = formatDate(computedInflowDate);
+    document.getElementById('obligationDate').value = formatDate(computedObligationDate);
   }
 
   function parseFormattedNumber(val) {
@@ -542,15 +546,15 @@
   function calculate() {
     const outflowVal = document.getElementById('outflowDate').value;
     const dOutflow = outflowVal ? new Date(outflowVal + 'T00:00:00') : new Date();
+    const inflowVal = document.getElementById('inflowDate').value;
+    const dInflow = inflowVal ? new Date(inflowVal + 'T00:00:00') : computedInflowDate;
 
-    if (!isNaN(dOutflow.getTime())) {
-      updateAprilDates(dOutflow);
-    }
-
-    const dObligation = computedObligationDate;
-    const dInflow = computedInflowDate;
+    const obligationVal = document.getElementById('obligationDate').value;
+    const dObligation = obligationVal ? new Date(obligationVal + 'T00:00:00') : computedObligationDate;
 
     const amountOutflow = parseFormattedNumber(document.getElementById('outflowAmount').value);
+    
+    // ... (keep the rest of your calculate function exactly the same from here down)
     const amountObligation = parseFormattedNumber(document.getElementById('obligationAmount').value);
     const amountInflow = parseFormattedNumber(document.getElementById('inflowAmount').value);
 
@@ -634,6 +638,13 @@
       input.addEventListener('input', calculate);
       input.addEventListener('change', calculate);
       input.addEventListener('keyup', calculate);
+    });
+
+    document.getElementById('outflowDate').addEventListener('change', (e) => {
+      const newOutflow = new Date(e.target.value + 'T00:00:00');
+      if (!isNaN(newOutflow.getTime())) {
+        updateAprilDates(newOutflow);
+      }
     });
 
     calculate();
