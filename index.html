@@ -167,22 +167,6 @@
       box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15);
     }
 
-    .static-date-display {
-      width: 100%;
-      min-width: 0;
-      height: 38px;
-      padding: 0 11px;
-      border: 1px solid #e2e8f0;
-      border-radius: 6px;
-      font-size: 0.875rem;
-      color: #64748b;
-      background-color: #f1f5f9;
-      display: flex;
-      align-items: center;
-      user-select: none;
-      -webkit-user-select: none;
-    }
-
     .checkbox-group {
       display: flex;
       align-items: center;
@@ -321,7 +305,7 @@
         font-size: 0.7rem;
       }
 
-      .form-group input, .static-date-display, input[type="date"] {
+      .form-group input, input[type="date"] {
         padding: 0 6px;
         font-size: 0.78rem;
         height: 34px;
@@ -382,7 +366,7 @@
         </div>
         <div class="form-group">
           <label for="inflowDate">Inflow Date</label>
-          <input type="date" id="inflowDate">
+          <input type="date" id="inflowDate" value="2027-04-01">
         </div>
       </div>
 
@@ -395,7 +379,7 @@
         </div>
         <div class="form-group">
         <label for="obligationDate">Obligation Date</label>
-        <input type="date" id="obligationDate">
+        <input type="date" id="obligationDate" value="2028-04-01">
       </div>
       </div>
 
@@ -480,14 +464,14 @@
   </footer>
 </div>
 
-<script>
+  <script>
   let computedInflowDate = new Date();
   let computedObligationDate = new Date();
 
   function initDefaults() {
     const today = new Date();
     document.getElementById('outflowDate').value = today.toISOString().split('T')[0];
-    updateAprilDates(today);
+    // Removed updateAprilDates(today) to keep the hardcoded HTML default values on load
   }
 
   function updateAprilDates(dOutflow) {
@@ -553,8 +537,6 @@
     const dObligation = obligationVal ? new Date(obligationVal + 'T00:00:00') : computedObligationDate;
 
     const amountOutflow = parseFormattedNumber(document.getElementById('outflowAmount').value);
-    
-    // ... (keep the rest of your calculate function exactly the same from here down)
     const amountObligation = parseFormattedNumber(document.getElementById('obligationAmount').value);
     const amountInflow = parseFormattedNumber(document.getElementById('inflowAmount').value);
 
