@@ -15,6 +15,7 @@
       --primary: #0f172a;
       --secondary: #1e293b;
       --accent: #2563eb;
+      --number: #1e40af;
       --text: #334155;
       --text-muted: #64748b;
       --bg: #f8fafc;
@@ -59,7 +60,7 @@
     
     .result-label { font-size: 0.85rem; color: var(--secondary); font-weight: 500; line-height: 1.4; }
     .result-label small { display: block; color: var(--text-muted); font-size: 0.75rem; font-weight: 400; margin-top: 2px; }
-    .result-value { font-size: 1.05rem; font-weight: 600; color: var(--primary); text-align: right; font-family: 'Roboto Mono', monospace; }
+    .result-value { font-size: 1.05rem; font-weight: 600; color: var(--number); text-align: right; font-family: 'Roboto Mono', monospace; }
     
     .result-item.highlight-box .result-label { font-weight: 600; color: var(--primary); }
     .result-item.highlight-box.green .result-value { color: var(--success); font-weight: 700; font-size: 1.15rem; }
@@ -70,9 +71,13 @@
     .explanation-step { display: flex; gap: 16px; margin-bottom: 16px; align-items: flex-start; }
     .explanation-step:last-child { margin-bottom: 0; }
     .step-number { background-color: var(--primary); color: white; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700; flex-shrink: 0; margin-top: 2px; }
-    .step-text { font-size: 0.95rem; color: var(--secondary); line-height: 1.6; }
-    .dyn-val { font-weight: 700; color: var(--primary); font-family: 'Roboto Mono', monospace; background-color: var(--highlight); padding: 2px 6px; border-radius: 4px; font-size: 0.9rem;}
+    .step-text { flex: 1; min-width: 0; font-size: 0.87rem; color: var(--secondary); line-height: 1.6; }
+    .dyn-val { font-weight: 700; color: var(--number); font-family: 'Roboto Mono', monospace; background-color: var(--highlight); padding: 2px 6px; border-radius: 4px; font-size: 0.9rem;}
     .dyn-val.green { background-color: #f0fdf4; color: var(--success); }
+    .step-math { margin-top: 8px; font-family: 'Roboto Mono', monospace; font-size: 0.78rem; color: var(--text-muted); background-color: #f1f5f9; border: 1px solid var(--border); border-radius: 4px; padding: 8px 10px; line-height: 1.7; white-space: pre-wrap; }
+    .xirr-text { font-size: 0.84rem; color: var(--secondary); line-height: 1.7; margin-bottom: 14px; }
+    .xirr-text:last-child { margin-bottom: 0; }
+    .date-tag { font-family: 'Roboto Mono', monospace; font-weight: 600; color: var(--number); }
 
     .action-container { display: flex; justify-content: center; margin-top: 32px; }
     .btn-action { background-color: var(--primary); color: #ffffff; border: 1px solid transparent; padding: 10px 24px; font-size: 0.9rem; font-weight: 500; border-radius: 6px; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; transition: all 0.2s ease; }
@@ -115,13 +120,13 @@
 
       <div class="section-title">4. Reserve & Tax Rates</div>
       <div class="input-row">
-        <div class="form-group"><label>Gross Reserve Rate (%)</label><input type="number" id="grossRate" value="0.00" step="0.01"></div>
+        <div class="form-group"><label>Gross Reserve Rate (%)</label><input type="number" id="grossRate" value="4.30" step="0.01"></div>
         <div class="form-group"><label>Tax Rate (%)</label><input type="number" id="taxRate" value="53.54" step="0.01"></div>
       </div>
 
       <div class="checkbox-group">
-        <input type="checkbox" id="enableCoasting">
-        <label for="enableCoasting">Re-invest inflow to 1-year anniversary</label>
+        <input type="checkbox" id="enableCoasting" checked>
+        <label for="enableCoasting">Re-invest cleared cash in GIC to the 1-year anniversary</label>
       </div>
     </div>
 
@@ -130,28 +135,38 @@
 
       <div class="results-list">
         <div class="result-item">
-          <div class="result-label">Net Cash Outlay<small>Day 1 Out-of-Pocket</small></div>
+          <div class="result-label">Net Cash Outlay<small>Day 1 Out-of-Pocket · <span class="date-tag" id="sumOutflowDate">—</span></small></div>
           <div class="result-value" id="netOutlayVal">$0</div>
         </div>
 
-        <div class="result-item highlight-box">
-          <div class="result-label">Year 1 Net Return<small>Inflow less discounted Y2 tax reserve</small></div>
-          <div class="result-value" id="returnY1Val">0.0%</div>
+        <div class="result-item">
+          <div class="result-label">Year 2 Tax Reserve @ <span class="date-tag" id="sumReserveGrossRate">0.0%</span> (<span class="date-tag" id="sumReserveNetRate">0.0%</span> net)<small>Set aside <span class="date-tag" id="sumReserveDate">—</span> · matures <span class="date-tag" id="sumObligationDate">—</span></small></div>
+          <div class="result-value" id="reserveVal">$0</div>
         </div>
 
         <div class="result-item">
-          <div class="result-label">Year 2 Cumulative Profit<small>Final Inflow - Obligation - Outlay</small></div>
+          <div class="result-label">Cleared Cash<small>Inflow less Y2 tax reserve · received <span class="date-tag" id="sumInflowDate">—</span></small></div>
+          <div class="result-value" id="clearedCashVal">$0</div>
+        </div>
+
+        <div class="result-item">
+          <div class="result-label">Net Profit<small>Cleared cash less Day 1 outlay · realized <span class="date-tag" id="sumRealizeDate">—</span></small></div>
           <div class="result-value" id="profitY2Val">$0</div>
         </div>
 
         <div class="result-item highlight-box">
-          <div class="result-label">Year 2 Cumulative Return<small>Total Cash-on-Cash Return</small></div>
-          <div class="result-value" id="returnY2Val">0.0%</div>
+          <div class="result-label">Cash-on-Cash Return<small>Cleared profit ÷ Day 1 outlay (not annualized)</small></div>
+          <div class="result-value" id="returnY1Val">0.0%</div>
         </div>
 
         <div class="result-item highlight-box green">
-          <div class="result-label">Annualized Return (IRR)<small>True time-weighted 12-month rate</small></div>
+          <div class="result-label">Annualized Return (IRR)<small>Time-weighted · <span class="date-tag" id="sumIrrStart">—</span> → <span class="date-tag" id="sumIrrEnd">—</span></small></div>
           <div class="result-value" id="irrVal">0.0%</div>
+        </div>
+
+        <div class="result-item" id="fullYearIrrRow" style="display:none">
+          <div class="result-label">Full-Year IRR (GIC held)<small>If cleared cash is held in GIC to the 1-year mark (<span class="date-tag" id="sumAnnivDate">—</span>)</small></div>
+          <div class="result-value" id="fullYearIrrVal">0.0%</div>
         </div>
 
         <div class="result-item">
@@ -169,30 +184,58 @@
     <div class="explanation-step">
       <div class="step-number">1</div>
       <div class="step-text">
-        <strong>Initial Investment:</strong> You invest <span class="dyn-val" id="expOutlay">$0</span> out-of-pocket on Day 1. This represents your true capital commitment.
+        <strong>Initial Investment:</strong> On <span class="dyn-val" id="expOutflowDate">—</span>, you invest <span class="dyn-val" id="expOutlay">$0</span> out-of-pocket.
+        <div class="step-math" id="math1"></div>
       </div>
     </div>
 
     <div class="explanation-step">
       <div class="step-number">2</div>
       <div class="step-text">
-        <strong>Tax Benefit Received:</strong> In Year 1, you receive a tax benefit inflow of <span class="dyn-val" id="expInflow">$0</span>.
+        <strong>Inflow Received:</strong> <span class="dyn-val" id="expDaysInflow">0</span> days later, on <span class="dyn-val" id="expInflowDate">—</span>, you receive an inflow of <span class="dyn-val" id="expInflow">$0</span>.
+        <div class="step-math" id="math2"></div>
       </div>
     </div>
 
     <div class="explanation-step">
       <div class="step-number">3</div>
       <div class="step-text">
-        <strong>Deferred Tax Obligation:</strong> In Year 2, a deferred tax obligation of <span class="dyn-val" id="expObligation">$0</span> comes due. Crucially, you pay this out of your Year 1 inflow, <em>not</em> from new out-of-pocket capital.
+        <strong>Reserve Invested:</strong> On that same date, you invest <span class="dyn-val" id="expReserve">$0</span> in a GIC at a gross rate of <span class="dyn-val" id="expGrossRate">0.00%</span> (net <span class="dyn-val" id="expNetRate">0.00%</span> after tax) to fund the Year 2 obligation.<span id="expReserveNote"></span>
+        <div class="step-math" id="math3"></div>
       </div>
     </div>
 
     <div class="explanation-step">
       <div class="step-number">4</div>
       <div class="step-text">
-        <strong>The Result:</strong> After setting aside money for the future tax bill, you are left with <span class="dyn-val green" id="expProfit">$0</span> in pure, cleared cash profit. Because your total investment base remained strictly your Day 1 outlay, your cumulative cash-on-cash return is highly advantaged at <span class="dyn-val green" id="expReturn">0.0%</span>.
+        <strong>Cleared Cash:</strong> After reserving, <span class="dyn-val" id="expClearedCash">$0</span> is cleared.<span id="expReinvestNote"></span>
+        <div class="step-math" id="math4"></div>
       </div>
     </div>
+
+    <div class="explanation-step">
+      <div class="step-number">5</div>
+      <div class="step-text">
+        <strong>Obligation Paid:</strong> On <span class="dyn-val" id="expObligationDate">—</span>, the reserve matures to <span class="dyn-val" id="expObligation">$0</span> net of tax and the Year 2 obligation is paid in full.
+        <div class="step-math" id="math5"></div>
+      </div>
+    </div>
+
+    <div class="explanation-step">
+      <div class="step-number">6</div>
+      <div class="step-text">
+        <strong>The Result:</strong> You are left with <span class="dyn-val green" id="expProfit">$0</span> in cleared profit — an annualized return (IRR) of <span class="dyn-val green" id="expIrr">0.0%</span> on your Day 1 outlay.<span id="expFullYearNote"></span>
+        <div class="step-math" id="math6"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- XIRR EXPLANATION CARD -->
+  <div class="card explanation-card">
+    <h2>Why We Use XIRR</h2>
+    <p class="xirr-text"><strong>What it is:</strong> XIRR (eXtended Internal Rate of Return) is the single annualized rate that makes the present value of every dated cash flow equal to zero. In plain terms, it answers: <em>“what constant yearly return would produce this exact set of payments on these exact dates?”</em></p>
+    <p class="xirr-text"><strong>Why we use it:</strong> This strategy’s cash flows don't fall on clean annual boundaries — money goes out on day 1, comes back ~6 months later, and a funded obligation settles ~2 years out. A simple cash-on-cash return (profit ÷ outlay) ignores timing, so it can't fairly compare a 192-day deal to a 365-day deal. XIRR weights every dollar by the exact day it moves, which is the only objective way to annualize an irregular cash-flow strategy.</p>
+    <p class="xirr-text"><strong>How to read it:</strong> An XIRR of <span class="dyn-val" id="expXirrValue">0.0%</span> means the strategy compounds as if it earned that rate per year over its actual holding period — giving full credit for returning money early.</p>
   </div>
 
   <div class="action-container">
@@ -210,7 +253,20 @@
   }
 
   function formatCurrency(val) {
-    return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(val);
+    return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0, maximumFractionDigits: 2 }).format(val);
+  }
+
+  function formatDate(d) {
+    if (!d || isNaN(d.getTime())) return '—';
+    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  }
+
+  function formatDateShort(d) {
+    if (!d || isNaN(d.getTime())) return '—';
+    const mm = String(d.getMonth() + 1).padStart(2, '0');
+    const dd = String(d.getDate()).padStart(2, '0');
+    const yy = String(d.getFullYear()).slice(-2);
+    return `${mm}/${dd}/${yy}`;
   }
 
   function calculateXIRR(cashFlows) {
@@ -247,53 +303,126 @@
     const inflow = parseNumber(document.getElementById('inflowAmount').value);
     const obligation = parseNumber(document.getElementById('obligationAmount').value);
 
-    const netRate = (parseFloat(document.getElementById('grossRate').value) || 0) / 100 * (1 - (parseFloat(document.getElementById('taxRate').value) || 0) / 100);
+    const grossRate = (parseFloat(document.getElementById('grossRate').value) || 0) / 100;
     const taxRate = (parseFloat(document.getElementById('taxRate').value) || 0) / 100;
+    const netRate = grossRate * (1 - taxRate);
 
     if (isNaN(dOutflow.getTime()) || outlay === 0) return;
 
     const msPerDay = 1000 * 60 * 60 * 24;
     const daysInflow = Math.max(0, (dInflow - dOutflow) / msPerDay);
     const daysY1toY2 = Math.max(0, (dObligation - dInflow) / msPerDay);
+    const coasting = document.getElementById('enableCoasting').checked;
 
-    let finalInflow = inflow;
-    if (document.getElementById('enableCoasting').checked) {
-      const daysCoasting = Math.max(0, 365 - daysInflow);
-      finalInflow = inflow * Math.pow(1 + netRate, daysCoasting / 365);
-    }
+    // Only the amount required to generate the Y2 obligation (net of tax)
+    // is set aside from the Y1 inflow, invested at the GIC (gross) rate.
+    const reserveGrowth = Math.pow(1 + grossRate, daysY1toY2 / 365);
+    const reserveNeededY1 = obligation / (reserveGrowth * (1 - taxRate) + taxRate);
 
-    const reserveNeededY1 = obligation / Math.pow(1 + netRate, daysY1toY2 / 365);
-    const clearedCashY1 = finalInflow - reserveNeededY1;
-    const returnY1 = (clearedCashY1 - outlay) / outlay;
+    // Cash cleared after reserving for the Y2 obligation — the deal's own cash.
+    const clearedCashY1 = inflow - reserveNeededY1;
+    const profitY2 = clearedCashY1 - outlay;
+    const returnOnCash = profitY2 / outlay;
 
-    const profitY2 = finalInflow - obligation - outlay;
-    const returnY2 = profitY2 / outlay;
-
+    // Strategy annualized return: the deal as structured (early money + funded Y2).
     let irr = 0;
-    if (daysInflow > 0) {
+    if (daysInflow > 0 && clearedCashY1 > 0) {
       irr = calculateXIRR([
         { amount: -outlay, date: dOutflow },
-        { amount: finalInflow, date: dInflow },
-        { amount: -obligation, date: dObligation }
+        { amount: clearedCashY1, date: dInflow }
+      ]);
+    }
+
+    // Optional full-year view: hold the cleared cash in the GIC to the 1-year mark.
+    const daysReinvested = coasting ? Math.max(0, 365 - daysInflow) : 0;
+    const reinvestGrowth = Math.pow(1 + grossRate, daysReinvested / 365) * (1 - taxRate) + taxRate;
+    const finalCash = clearedCashY1 * reinvestGrowth;
+    const finalCashDate = (coasting && daysReinvested > 0)
+      ? new Date(dOutflow.getTime() + 365 * msPerDay)
+      : dInflow;
+
+    let fullYearIrr = 0;
+    if (coasting && daysReinvested > 0 && finalCash > 0) {
+      fullYearIrr = calculateXIRR([
+        { amount: -outlay, date: dOutflow },
+        { amount: finalCash, date: finalCashDate }
       ]);
     }
 
     const grossEq = taxRate < 1 ? (irr / (1 - taxRate)) : 0;
+    const showFullYear = coasting && daysReinvested > 0;
 
     // Update Summary Card
     document.getElementById('netOutlayVal').innerText = formatCurrency(outlay);
-    document.getElementById('returnY1Val').innerText = `${(returnY1 * 100).toFixed(2)}%`;
+    document.getElementById('reserveVal').innerText = formatCurrency(reserveNeededY1);
+    document.getElementById('sumReserveGrossRate').innerText = `${(grossRate * 100).toFixed(1)}%`;
+    document.getElementById('sumReserveNetRate').innerText = `${(netRate * 100).toFixed(1)}%`;
+    document.getElementById('clearedCashVal').innerText = formatCurrency(clearedCashY1);
     document.getElementById('profitY2Val').innerText = formatCurrency(profitY2);
-    document.getElementById('returnY2Val').innerText = `${(returnY2 * 100).toFixed(2)}%`;
+    document.getElementById('returnY1Val').innerText = `${(returnOnCash * 100).toFixed(2)}%`;
     document.getElementById('irrVal').innerText = `${(irr * 100).toFixed(2)}%`;
     document.getElementById('grossEqRateVal').innerText = `${(grossEq * 100).toFixed(2)}%`;
 
-    // Update Explanation Text
+    // Dates for the summary sublabels (short MM/DD/YY)
+    document.getElementById('sumOutflowDate').innerText = formatDateShort(dOutflow);
+    document.getElementById('sumReserveDate').innerText = formatDateShort(dInflow);
+    document.getElementById('sumInflowDate').innerText = formatDateShort(dInflow);
+    document.getElementById('sumObligationDate').innerText = formatDateShort(dObligation);
+    document.getElementById('sumRealizeDate').innerText = formatDateShort(finalCashDate);
+    document.getElementById('sumIrrStart').innerText = formatDateShort(dOutflow);
+    document.getElementById('sumIrrEnd').innerText = formatDateShort(finalCashDate);
+    document.getElementById('sumAnnivDate').innerText = formatDateShort(new Date(dOutflow.getTime() + 365 * msPerDay));
+
+    const fullYearRow = document.getElementById('fullYearIrrRow');
+    fullYearRow.style.display = showFullYear ? 'flex' : 'none';
+    if (showFullYear) {
+      document.getElementById('fullYearIrrVal').innerText = `${(fullYearIrr * 100).toFixed(2)}%`;
+    }
+
+    // Update Explanation Text (granular, dated cash-flow timeline)
+    document.getElementById('expOutflowDate').innerText = formatDate(dOutflow);
     document.getElementById('expOutlay').innerText = formatCurrency(outlay);
-    document.getElementById('expInflow').innerText = formatCurrency(finalInflow);
+    document.getElementById('expDaysInflow').innerText = Math.round(daysInflow);
+    document.getElementById('expInflowDate').innerText = formatDate(dInflow);
+    document.getElementById('expInflow').innerText = formatCurrency(inflow);
+    document.getElementById('expReserve').innerText = formatCurrency(reserveNeededY1);
+    document.getElementById('expGrossRate').innerText = `${(grossRate * 100).toFixed(2)}%`;
+    document.getElementById('expNetRate').innerText = `${(netRate * 100).toFixed(2)}%`;
+    document.getElementById('expReserveNote').innerText = (obligation - reserveNeededY1) > 0
+      ? ` Only the present value is locked up — the GIC earns ${formatCurrency(obligation - reserveNeededY1)} by Y2, so the full ${formatCurrency(obligation)} is covered at maturity.`
+      : '';
+    document.getElementById('expClearedCash').innerText = formatCurrency(clearedCashY1);
+    document.getElementById('expReinvestNote').innerText = showFullYear
+      ? ` Held in the GIC for ${Math.round(daysReinvested)} more days to ${formatDate(finalCashDate)}, it totals ${formatCurrency(finalCash)}.`
+      : ` You receive this immediately on ${formatDate(dInflow)}.`;
+    document.getElementById('expObligationDate').innerText = formatDate(dObligation);
     document.getElementById('expObligation').innerText = formatCurrency(obligation);
     document.getElementById('expProfit').innerText = formatCurrency(profitY2);
-    document.getElementById('expReturn').innerText = `${(returnY2 * 100).toFixed(2)}%`;
+    document.getElementById('expIrr').innerText = `${(irr * 100).toFixed(2)}%`;
+    document.getElementById('expFullYearNote').innerText = showFullYear
+      ? ` Hold it in the GIC to the 1-year mark and your full-year IRR is ${(fullYearIrr * 100).toFixed(2)}% — lower only because the GIC earns ${(netRate * 100).toFixed(2)}% net on the tail.`
+      : '';
+
+    // Math descriptions for each step
+    const tY = daysY1toY2 / 365;
+    const reserveFactor = reserveGrowth * (1 - taxRate) + taxRate;
+    document.getElementById('math1').innerText = `Outlay = ${formatCurrency(outlay)}`;
+    document.getElementById('math2').innerText = `Days = ${Math.round(daysInflow)} (inflow date − outflow date)\nInflow = ${formatCurrency(inflow)}`;
+    document.getElementById('math3').innerText =
+      `Reserve = Obligation ÷ [(1 + g)^t × (1 − τ) + τ]\n` +
+      `= ${formatCurrency(obligation)} ÷ [${(1 + grossRate).toFixed(4)}^${tY.toFixed(2)} × ${(1 - taxRate).toFixed(4)} + ${taxRate.toFixed(4)}]\n` +
+      `= ${formatCurrency(obligation)} ÷ ${reserveFactor.toFixed(5)} = ${formatCurrency(reserveNeededY1)}`;
+    document.getElementById('math4').innerText =
+      `Cleared Cash = Inflow − Reserve\n` +
+      `= ${formatCurrency(inflow)} − ${formatCurrency(reserveNeededY1)} = ${formatCurrency(clearedCashY1)}`;
+    document.getElementById('math5').innerText =
+      `Reserve × [(1 + g)^t × (1 − τ) + τ]\n` +
+      `= ${formatCurrency(reserveNeededY1)} × ${reserveFactor.toFixed(5)} = ${formatCurrency(obligation)} → paid in full`;
+    document.getElementById('math6').innerText =
+      `XIRR = (Cleared Cash ÷ Outlay)^(365 ÷ days) − 1\n` +
+      `= (${formatCurrency(clearedCashY1)} ÷ ${formatCurrency(outlay)})^(365 ÷ ${Math.round(daysInflow)}) − 1\n` +
+      `= ${(irr * 100).toFixed(2)}%`;
+    document.getElementById('expXirrValue').innerText = `${(irr * 100).toFixed(2)}%`;
   }
 
   // URL State saving
