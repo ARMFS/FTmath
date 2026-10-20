@@ -429,44 +429,95 @@
   }
 
   // URL State saving
+  // Encode as base64url (URL-safe, no padding) so the link stays short.
+  function b64urlEncode(str) {
+    return btoa(str).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+  }
+  function b64urlDecode(str) {
+    let b64 = String(str).replace(/-/g, '+').replace(/_/g, '/');
+    while (b64.length % 4) b64 += '=';
+    return atob(b64);
+  }
+
   function buildShareLink() {
-    const state = {
-      oa: document.getElementById('outflowAmount').value,
-      od: document.getElementById('outflowDate').value,
-      ia: document.getElementById('inflowAmount').value,
-      id: document.getElementById('inflowDate').value,
-      oba: document.getElementById('obligationAmount').value,
-      obd: document.getElementById('obligationDate').value,
-      gr: document.getElementById('grossRate').value,
-      tr: document.getElementById('taxRate').value,
-      ec: document.getElementById('enableCoasting').checked
-    };
-    const encoded = btoa(JSON.stringify(state));
+    const amount = (id) => document.getElementById(id).value.replace(/,/g, '').trim();
+    const date8 = (id) => document.getElementById(id).value.replace(/-/g, '');
+    // Positional, pipe-delimited values (no field names) keep the payload minimal.
+    const parts = [
+      amount('outflowAmount'),
+      date8('outflowDate'),
+      amount('inflowAmount'),
+      date8('inflowDate'),
+      amount('obligationAmount'),
+      date8('obligationDate'),
+      String(document.getElementById('grossRate').value).replace(/,/g, '').trim(),
+      String(document.getElementById('taxRate').value).replace(/,/g, '').trim(),
+      document.getElementById('enableCoasting').checked ? '1' : '0'
+    ];
+    const encoded = b64urlEncode(parts.join('|'));
     const url = new URL(window.location.href);
     url.searchParams.set('d', encoded);
     return url.toString();
   }
 
+  function formatNumberInput(val) {
+    const v = String(val).replace(/[^0-9.]/g, '');
+    if (!v) return '';
+    const parts = v.split('.');
+    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    return parts.join('.');
+  }
+
+  function formatDateInput(val) {
+    const s = String(val).replace(/-/g, '');
+    if (s.length === 8) return s.slice(0, 4) + '-' + s.slice(4, 6) + '-' + s.slice(6, 8);
+    return String(val);
+  }
+
+  function applyState(state) {
+    if (state.oa !== undefined && state.oa !== '') document.getElementById('outflowAmount').value = formatNumberInput(state.oa);
+    if (state.od !== undefined && state.od !== '') document.getElementById('outflowDate').value = formatDateInput(state.od);
+    if (state.ia !== undefined && state.ia !== '') document.getElementById('inflowAmount').value = formatNumberInput(state.ia);
+    if (state.id !== undefined && state.id !== '') document.getElementById('inflowDate').value = formatDateInput(state.id);
+    if (state.oba !== undefined && state.oba !== '') document.getElementById('obligationAmount').value = formatNumberInput(state.oba);
+    if (state.obd !== undefined && state.obd !== '') document.getElementById('obligationDate').value = formatDateInput(state.obd);
+    if (state.gr !== undefined && state.gr !== '') document.getElementById('grossRate').value = state.gr;
+    if (state.tr !== undefined && state.tr !== '') document.getElementById('taxRate').value = state.tr;
+    if (state.ec !== undefined) document.getElementById('enableCoasting').checked = (state.ec === '1' || state.ec === true);
+    return true;
+  }
+
   function loadFromURL() {
-    const params = new URLSearchParams(window.location.search);
-    const data = params.get('d');
+    const data = new URLSearchParams(window.location.search).get('d');
     if (!data) return false;
-    try {
-      const state = JSON.parse(atob(data));
-      if(state.oa) document.getElementById('outflowAmount').value = state.oa;
-      if(state.od) document.getElementById('outflowDate').value = state.od;
-      if(state.ia) document.getElementById('inflowAmount').value = state.ia;
-      if(state.id) document.getElementById('inflowDate').value = state.id;
-      if(state.oba) document.getElementById('obligationAmount').value = state.oba;
-      if(state.obd) document.getElementById('obligationDate').value = state.obd;
-      if(state.gr !== undefined) document.getElementById('grossRate').value = state.gr;
-      if(state.tr !== undefined) document.getElementById('taxRate').value = state.tr;
-      if(state.ec !== undefined) document.getElementById('enableCoasting').checked = state.ec;
-      return true;
-    } catch(err) {
-      console.error("Failed to parse share URL data");
-      return false;
+
+    // Legacy links use standard Base64 of JSON (contain +, / or =).
+    if (/[+/=]/.test(data)) {
+      try {
+        const state = JSON.parse(atob(data));
+        return applyState({
+          oa: state.oa, od: state.od, ia: state.ia, id: state.id,
+          oba: state.oba, obd: state.obd, gr: state.gr, tr: state.tr, ec: state.ec
+        });
+      } catch (err) {
+        console.error("Failed to parse share URL data");
+        return false;
+      }
     }
+
+    // New compact format: base64url of pipe-delimited values.
+    try {
+      const parts = b64urlDecode(data).split('|');
+      if (parts.length >= 9) {
+        return applyState({
+          oa: parts[0], od: parts[1], ia: parts[2], id: parts[3],
+          oba: parts[4], obd: parts[5], gr: parts[6], tr: parts[7], ec: parts[8]
+        });
+      }
+    } catch (err) {
+      console.error("Failed to parse share URL data");
+    }
+    return false;
   }
 
   document.addEventListener('DOMContentLoaded', () => {
