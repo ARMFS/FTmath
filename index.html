@@ -170,7 +170,7 @@
         </div>
 
         <div class="result-item">
-          <div class="result-label">Gross Pre-Tax Equivalent<small>Required GIC Yield to match IRR</small></div>
+          <div class="result-label">Taxable-Equivalent Yield<small>IRR <span class="date-tag" id="teyIrr">0.0%</span> ÷ (1 − <span class="date-tag" id="teyTax">0.0%</span> tax)</small></div>
           <div class="result-value" id="grossEqRateVal">0.0%</div>
         </div>
       </div>
@@ -362,6 +362,8 @@
     document.getElementById('returnY1Val').innerText = `${(returnOnCash * 100).toFixed(2)}%`;
     document.getElementById('irrVal').innerText = `${(irr * 100).toFixed(2)}%`;
     document.getElementById('grossEqRateVal').innerText = `${(grossEq * 100).toFixed(2)}%`;
+    document.getElementById('teyIrr').innerText = `${(irr * 100).toFixed(2)}%`;
+    document.getElementById('teyTax').innerText = `${(taxRate * 100).toFixed(2)}%`;
 
     // Dates for the summary sublabels (short MM/DD/YY)
     document.getElementById('sumOutflowDate').innerText = formatDateShort(dOutflow);
