@@ -10,21 +10,17 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
   
-  <!-- html2pdf library -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-
   <style>
     :root {
-      /* Corporate Financial Palette */
-      --primary: #0f172a;       /* Dark slate/navy for headers */
-      --secondary: #1e293b;     /* Slightly lighter slate */
-      --accent: #2563eb;        /* Professional blue for highlights/buttons */
-      --text: #334155;          /* Main text color */
-      --text-muted: #64748b;    /* Subtitles and labels */
-      --bg: #f8fafc;            /* Page background */
-      --card-bg: #ffffff;       /* Card background */
-      --border: #e2e8f0;        /* Crisp, subtle borders */
-      --success: #15803d;       /* Professional green */
+      --primary: #0f172a;
+      --secondary: #1e293b;
+      --accent: #2563eb;
+      --text: #334155;
+      --text-muted: #64748b;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --border: #e2e8f0;
+      --success: #15803d;
     }
 
     * {
@@ -76,13 +72,12 @@
       font-weight: 400;
     }
 
-    /* Grid configuration for equal height columns */
     .grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 24px;
       width: 100%;
-      align-items: stretch; /* Forces equal height */
+      align-items: stretch;
     }
 
     .card {
@@ -95,7 +90,7 @@
       min-width: 0;
       display: flex;
       flex-direction: column;
-      height: 100%; /* Take up full stretched height */
+      height: 100%;
     }
 
     .card h2 {
@@ -145,7 +140,6 @@
       text-overflow: ellipsis;
     }
 
-    /* Standardized Input Sizing */
     .form-group input {
       width: 100%;
       min-width: 0;
@@ -157,7 +151,7 @@
       color: var(--primary);
       background-color: #fff;
       transition: all 0.2s;
-      font-family: 'Roboto Mono', monospace; /* Monospace for numbers */
+      font-family: 'Roboto Mono', monospace;
       -webkit-appearance: none;
       appearance: none;
     }
@@ -202,12 +196,11 @@
       cursor: pointer;
     }
 
-    /* Results List Styling (Even Distribution) */
     .results-list {
       display: flex;
       flex-direction: column;
-      flex-grow: 1; /* Take remaining space in the card */
-      justify-content: space-between; /* Distribute items evenly */
+      flex-grow: 1;
+      justify-content: space-between;
       width: 100%;
     }
 
@@ -230,7 +223,6 @@
       padding-top: 0;
     }
 
-    /* Subtler highlights instead of pastel boxes */
     .result-item.highlight .result-label {
       color: var(--primary);
       font-weight: 700;
@@ -262,7 +254,7 @@
       color: var(--primary);
       white-space: nowrap;
       text-align: right;
-      font-family: 'Roboto Mono', monospace; /* Monospace for numbers */
+      font-family: 'Roboto Mono', monospace;
     }
 
     .result-item.highlight-green .result-value {
@@ -271,14 +263,13 @@
       font-weight: 700;
     }
 
-    /* Export Button Styles */
-    .export-container {
+    .action-container {
       display: flex;
       justify-content: center;
       margin-top: 32px;
     }
 
-    .btn-export {
+    .btn-action {
       background-color: var(--primary);
       color: #ffffff;
       border: 1px solid transparent;
@@ -294,13 +285,13 @@
       gap: 8px;
     }
 
-    .btn-export:hover {
+    .btn-action:hover {
       background-color: var(--card-bg);
       color: var(--primary);
       border: 1px solid var(--primary);
     }
 
-    .btn-export:active {
+    .btn-action:active {
       transform: scale(0.98);
     }
 
@@ -311,31 +302,15 @@
       color: var(--text-muted);
     }
 
-    /* RESPONSIVE MEDIA QUERIES */
     @media (max-width: 768px) {
-      body {
-        padding: 24px 16px;
-      }
-
-      .grid {
-        grid-template-columns: 1fr;
-        gap: 20px;
-      }
+      body { padding: 24px 16px; }
+      .grid { grid-template-columns: 1fr; gap: 20px; }
     }
 
     @media (max-width: 480px) {
-      body {
-        padding: 16px 8px;
-      }
-
-      .card {
-        padding: 20px 16px;
-      }
-
-      .input-row {
-        grid-template-columns: 1fr;
-        gap: 12px;
-      }
+      body { padding: 16px 8px; }
+      .card { padding: 20px 16px; }
+      .input-row { grid-template-columns: 1fr; gap: 12px; }
     }
   </style>
 </head>
@@ -456,10 +431,10 @@
           <div class="result-value" id="returnRateVal">0.0%</div>
         </div>
 
-        <div class="result-item highlight-green">
+        <div class="result-item">
           <div class="result-label">
-            Annualized Return
-            <small>12-month annualized yield (IRR)</small>
+            Annualized Return (CAGR)
+            <small>Compound annual growth rate to inflow</small>
           </div>
           <div class="result-value" id="annualizedReturnVal">0.0%</div>
         </div>
@@ -475,19 +450,21 @@
     </div>
   </div>
 
-  <div class="export-container" id="exportContainer">
-    <button id="exportPdfBtn" class="btn-export">
+  <div class="action-container">
+    <button id="shareBtn" class="btn-action">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-        <polyline points="7 10 12 15 17 10"></polyline>
-        <line x1="12" y1="15" x2="12" y2="3"></line>
+        <circle cx="18" cy="5" r="3"></circle>
+        <circle cx="6" cy="12" r="3"></circle>
+        <circle cx="18" cy="19" r="3"></circle>
+        <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+        <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
       </svg>
-      Export to PDF
+      <span id="shareBtnText">Share Link</span>
     </button>
   </div>
 
   <footer>
-    <p>Pre-Funded Investment Return Model</p>
+    <p>For educational purposes only.</p>
   </footer>
 </div>
 
@@ -495,22 +472,18 @@
   let computedInflowDate = new Date();
   let computedObligationDate = new Date();
 
-  function initDefaults() {
-    // Left intentionally blank so the hardcoded HTML default values are preserved on load
-  }
-
   function updateAprilDates(dOutflow) {
     const outflowYear = dOutflow.getFullYear();
     const outflowMonth = dOutflow.getMonth();
     const outflowDay = dOutflow.getDate();
 
     let inflowYear = outflowYear;
-    if (outflowMonth > 3 || (outflowMonth === 3 && outflowDay > 30)) {
+    if (outflowMonth > 3 || (outflowMonth === 3 && outflowDay > 1)) {
       inflowYear = outflowYear + 1;
     }
     let obligationYear = inflowYear + 1;
 
-    // Use April 30th dynamically moving forward
+    // Use April 30th based on new defaults
     computedInflowDate = new Date(inflowYear, 3, 30);
     computedObligationDate = new Date(obligationYear, 3, 30);
 
@@ -598,7 +571,12 @@
     // 2. Net Profit & Return Rates
     const netProfit = finalInflowValue - totalCommitted;
     const returnRate = totalCommitted > 0 ? (netProfit / totalCommitted) : 0;
-    const annualizedReturnRate = daysInflow > 0 ? (Math.pow(1 + returnRate, 365 / daysInflow) - 1) : 0;
+    
+    // 3. Annualized Return (CAGR)
+    let annualizedReturn = 0;
+    if (totalCommitted > 0 && daysInflow > 0) {
+       annualizedReturn = Math.pow(finalInflowValue / totalCommitted, 365 / daysInflow) - 1;
+    }
 
     // Gross Pre-Tax Equivalent Return Rate
     const grossEqRate = taxRate < 1 ? (returnRate / (1 - taxRate)) : 0;
@@ -609,7 +587,7 @@
     document.getElementById('totalCommittedVal').innerText = formatCurrency(totalCommitted);
     document.getElementById('netProfitVal').innerText = formatCurrency(netProfit);
     document.getElementById('returnRateVal').innerText = `${(returnRate * 100).toFixed(2)}%`;
-    document.getElementById('annualizedReturnVal').innerText = `${(annualizedReturnRate * 100).toFixed(2)}%`;
+    document.getElementById('annualizedReturnVal').innerText = `${(annualizedReturn * 100).toFixed(2)}%`;
     document.getElementById('grossEqRateVal').innerText = `${(grossEqRate * 100).toFixed(2)}%`;
   }
 
@@ -622,8 +600,53 @@
     }).format(val);
   }
 
+  // State Saving & Loading via URL
+  function buildShareLink() {
+    const state = {
+      oa: document.getElementById('outflowAmount').value,
+      od: document.getElementById('outflowDate').value,
+      ia: document.getElementById('inflowAmount').value,
+      id: document.getElementById('inflowDate').value,
+      oba: document.getElementById('obligationAmount').value,
+      obd: document.getElementById('obligationDate').value,
+      gr: document.getElementById('grossRate').value,
+      tr: document.getElementById('taxRate').value,
+      ec: document.getElementById('enableCoasting').checked
+    };
+    
+    // Base64 encode JSON state
+    const encoded = btoa(JSON.stringify(state));
+    const url = new URL(window.location.href);
+    url.searchParams.set('d', encoded);
+    return url.toString();
+  }
+
+  function loadFromURL() {
+    const params = new URLSearchParams(window.location.search);
+    const data = params.get('d');
+    if (!data) return false;
+
+    try {
+      const state = JSON.parse(atob(data));
+      if(state.oa) document.getElementById('outflowAmount').value = state.oa;
+      if(state.od) document.getElementById('outflowDate').value = state.od;
+      if(state.ia) document.getElementById('inflowAmount').value = state.ia;
+      if(state.id) document.getElementById('inflowDate').value = state.id;
+      if(state.oba) document.getElementById('obligationAmount').value = state.oba;
+      if(state.obd) document.getElementById('obligationDate').value = state.obd;
+      if(state.gr !== undefined) document.getElementById('grossRate').value = state.gr;
+      if(state.tr !== undefined) document.getElementById('taxRate').value = state.tr;
+      if(state.ec !== undefined) document.getElementById('enableCoasting').checked = state.ec;
+      return true;
+    } catch(err) {
+      console.error("Failed to parse share URL data");
+      return false;
+    }
+  }
+
   document.addEventListener('DOMContentLoaded', () => {
-    initDefaults();
+    // Attempt to load from URL first
+    loadFromURL();
 
     const formattedInputs = [
       document.getElementById('outflowAmount'),
@@ -649,34 +672,20 @@
       input.addEventListener('keyup', calculate);
     });
 
-    document.getElementById('outflowDate').addEventListener('change', (e) => {
-      const newOutflow = new Date(e.target.value + 'T00:00:00');
-      if (!isNaN(newOutflow.getTime())) {
-        updateAprilDates(newOutflow);
-      }
-    });
-
-    // PDF Export Logic
-    document.getElementById('exportPdfBtn').addEventListener('click', () => {
-      const container = document.querySelector('.container');
-      const exportContainer = document.getElementById('exportContainer');
+    // Share Button Logic
+    document.getElementById('shareBtn').addEventListener('click', async () => {
+      const link = buildShareLink();
+      const btnText = document.getElementById('shareBtnText');
       
-      exportContainer.style.display = 'none';
-
-      const opt = {
-        margin:       [0.5, 0.5, 0.5, 0.5],
-        filename:     'investment-return-model.pdf',
-        image:        { type: 'jpeg', quality: 0.98 },
-        html2canvas:  { scale: 2, useCORS: true },
-        jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
-      };
-
-      html2pdf().set(opt).from(container).save().then(() => {
-        exportContainer.style.display = 'flex';
-      }).catch(err => {
-        console.error('PDF Export Error:', err);
-        exportContainer.style.display = 'flex';
-      });
+      try {
+        await navigator.clipboard.writeText(link);
+        const originalText = btnText.innerText;
+        btnText.innerText = 'Link Copied!';
+        setTimeout(() => { btnText.innerText = originalText; }, 2000);
+      } catch (err) {
+        // Fallback for older browsers
+        prompt('Copy this link to share:', link);
+      }
     });
 
     calculate();
