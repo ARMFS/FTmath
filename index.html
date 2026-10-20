@@ -241,7 +241,7 @@
   <div class="card explanation-card">
     <h2>Why We Use XIRR</h2>
     <p class="xirr-text"><strong>What it is:</strong> XIRR (eXtended Internal Rate of Return) is the single annualized rate that makes the present value of every dated cash flow equal to zero. In plain terms, it answers: <em>“what constant yearly return would produce this exact set of payments on these exact dates?”</em></p>
-    <p class="xirr-text"><strong>Why we use it:</strong> This strategy’s cash flows don't fall on clean annual boundaries — money goes out on day 1, comes back ~<span class="dyn-val" id="xirrWhyInflow">6</span> months later, and a funded obligation settles ~<span class="dyn-val" id="xirrWhyObligation">2</span> years out. A simple cash-on-cash return (profit ÷ outlay) ignores timing, so it can't fairly compare a <span class="dyn-val" id="xirrWhyDays">—</span>-day deal to a 365-day deal. XIRR weights every dollar by the exact day it moves. The Y2 obligation is brought to net present value at <span class="dyn-val" id="xirrWhyNetRate">2.00%</span> net in Year 1 to avoid spikes.</p>
+    <p class="xirr-text"><strong>Why we use it:</strong> This strategy’s cash flows don't fall on clean annual boundaries — money goes out on day 1, comes back ~<span class="dyn-val" id="xirrWhyInflow">6</span> months later, and a funded obligation settles ~<span class="dyn-val" id="xirrWhyObligation">2</span> years out. A simple cash-on-cash return (profit ÷ outlay) ignores timing, so it can't fairly compare a <span class="dyn-val" id="xirrWhyDays">—</span>-day deal to a 365-day deal. XIRR weights every dollar by the exact day it moves. The Y2 obligation is brought to net present value at <span class="dyn-val" id="xirrWhyNetRate">2.00%</span> net as of the Year 1 inflow date (<span class="dyn-val" id="xirrWhyInflowDate">Apr 30, 2027</span>) to avoid spikes.</p>
     <p class="xirr-text"><strong>How to read it:</strong> An XIRR of <span class="dyn-val" id="expXirrValue">0.0%</span> means the strategy compounds as if it earned that rate per year over its actual holding period — giving full credit for returning money early.</p>
   </div>
 
@@ -392,6 +392,7 @@
     document.getElementById('xirrWhyInflow').innerText = approx(daysInflow / 30.44);
     document.getElementById('xirrWhyObligation').innerText = approx(Math.max(0, (dObligation - dOutflow) / msPerDay / 365));
     document.getElementById('xirrWhyNetRate').innerText = `${(netRate * 100).toFixed(2)}%`;
+    document.getElementById('xirrWhyInflowDate').innerText = formatDate(dInflow);
     document.getElementById('expInflowDate').innerText = formatDate(dInflow);
     document.getElementById('expInflow').innerText = formatCurrency(inflow);
     document.getElementById('expReserve').innerText = formatCurrency(reserveNeededY1);
