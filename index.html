@@ -109,7 +109,7 @@
 
       <div class="section-title">1. Initial Outflow</div>
       <div class="input-row">
-        <div class="form-group"><label>Amount ($)</label><input type="text" id="outflowAmount" value="43,162"></div>
+        <div class="form-group"><label>Amount ($)</label><input type="text" id="outflowAmount" value="43,162.00"></div>
         <div class="form-group"><label>Outflow Date</label><input type="date" id="outflowDate" value="2026-10-20"></div>
       </div>
 
@@ -241,7 +241,7 @@
   <div class="card explanation-card">
     <h2>Why We Use XIRR</h2>
     <p class="xirr-text"><strong>What it is:</strong> XIRR (eXtended Internal Rate of Return) is the single annualized rate that makes the present value of every dated cash flow equal to zero. In plain terms, it answers: <em>“what constant yearly return would produce this exact set of payments on these exact dates?”</em></p>
-    <p class="xirr-text"><strong>Why we use it:</strong> This strategy’s cash flows don't fall on clean annual boundaries — money goes out on day 1, comes back ~6 months later, and a funded obligation settles ~2 years out. A simple cash-on-cash return (profit ÷ outlay) ignores timing, so it can't fairly compare a 192-day deal to a 365-day deal. XIRR weights every dollar by the exact day it moves. The Y2 obligation is brought to net present value in Year 1 to avoid spikes.</p>
+    <p class="xirr-text"><strong>Why we use it:</strong> This strategy’s cash flows don't fall on clean annual boundaries — money goes out on day 1, comes back ~<span class="dyn-val" id="xirrWhyInflow">6</span> months later, and a funded obligation settles ~<span class="dyn-val" id="xirrWhyObligation">2</span> years out. A simple cash-on-cash return (profit ÷ outlay) ignores timing, so it can't fairly compare a <span class="dyn-val" id="xirrWhyDays">—</span>-day deal to a 365-day deal. XIRR weights every dollar by the exact day it moves. The Y2 obligation is brought to net present value at <span class="dyn-val" id="xirrWhyNetRate">2.00%</span> net in Year 1 to avoid spikes.</p>
     <p class="xirr-text"><strong>How to read it:</strong> An XIRR of <span class="dyn-val" id="expXirrValue">0.0%</span> means the strategy compounds as if it earned that rate per year over its actual holding period — giving full credit for returning money early.</p>
   </div>
 
@@ -386,6 +386,12 @@
     document.getElementById('expOutflowDate').innerText = formatDate(dOutflow);
     document.getElementById('expOutlay').innerText = formatCurrency(outlay);
     document.getElementById('expDaysInflow').innerText = Math.round(daysInflow);
+    document.getElementById('xirrWhyDays').innerText = Math.round(daysInflow);
+
+    const approx = (v) => { const r = Math.round(v * 10) / 10; return Number.isInteger(r) ? String(r) : r.toFixed(1); };
+    document.getElementById('xirrWhyInflow').innerText = approx(daysInflow / 30.44);
+    document.getElementById('xirrWhyObligation').innerText = approx(Math.max(0, (dObligation - dOutflow) / msPerDay / 365));
+    document.getElementById('xirrWhyNetRate').innerText = `${(netRate * 100).toFixed(2)}%`;
     document.getElementById('expInflowDate').innerText = formatDate(dInflow);
     document.getElementById('expInflow').innerText = formatCurrency(inflow);
     document.getElementById('expReserve').innerText = formatCurrency(reserveNeededY1);
@@ -465,6 +471,7 @@
     if (!v) return '';
     const parts = v.split('.');
     parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    parts[1] = (parts[1] || '').padEnd(2, '0').slice(0, 2);
     return parts.join('.');
   }
 
@@ -531,6 +538,7 @@
           if(!val) return;
           let parts = val.split('.');
           parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+          parts[1] = (parts[1] || '').padEnd(2, '0').slice(0, 2);
           e.target.value = parts.join('.');
         });
       }
