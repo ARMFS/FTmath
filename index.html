@@ -357,11 +357,11 @@
       <div class="input-row">
         <div class="form-group">
           <label for="outflowAmount">Amount ($)</label>
-          <input type="text" id="outflowAmount" value="50,000" inputmode="decimal">
+          <input type="text" id="outflowAmount" value="43,162" inputmode="decimal">
         </div>
         <div class="form-group">
           <label for="outflowDate">Outflow Date</label>
-          <input type="date" id="outflowDate">
+          <input type="date" id="outflowDate" value="2026-10-20">
         </div>
       </div>
 
@@ -370,11 +370,11 @@
       <div class="input-row">
         <div class="form-group">
           <label for="inflowAmount">Amount ($)</label>
-          <input type="text" id="inflowAmount" value="76,000" inputmode="decimal">
+          <input type="text" id="inflowAmount" value="70,589.80" inputmode="decimal">
         </div>
         <div class="form-group">
           <label for="inflowDate">Inflow Date</label>
-          <input type="date" id="inflowDate" value="2027-04-01">
+          <input type="date" id="inflowDate" value="2027-04-30">
         </div>
       </div>
 
@@ -383,11 +383,11 @@
       <div class="input-row">
         <div class="form-group">
           <label for="obligationAmount">Amount ($)</label>
-          <input type="text" id="obligationAmount" value="8,000" inputmode="decimal">
+          <input type="text" id="obligationAmount" value="16,059.05" inputmode="decimal">
         </div>
         <div class="form-group">
         <label for="obligationDate">Obligation Date</label>
-        <input type="date" id="obligationDate" value="2028-04-01">
+        <input type="date" id="obligationDate" value="2028-04-30">
       </div>
       </div>
 
@@ -396,7 +396,7 @@
       <div class="input-row">
         <div class="form-group">
           <label for="grossRate">Gross Reserve Rate (%)</label>
-          <input type="number" id="grossRate" value="4.30" step="0.01">
+          <input type="number" id="grossRate" value="0.00" step="0.01">
         </div>
         <div class="form-group">
           <label for="taxRate">Tax Rate (%)</label>
@@ -456,6 +456,14 @@
           <div class="result-value" id="returnRateVal">0.0%</div>
         </div>
 
+        <div class="result-item highlight-green">
+          <div class="result-label">
+            Annualized Return
+            <small>12-month annualized yield (IRR)</small>
+          </div>
+          <div class="result-value" id="annualizedReturnVal">0.0%</div>
+        </div>
+
         <div class="result-item highlight">
           <div class="result-label">
             Gross Pre-Tax Equivalent Rate
@@ -479,7 +487,7 @@
   </div>
 
   <footer>
-    <p>For educational purposes only.</p>
+    <p>Pre-Funded Investment Return Model</p>
   </footer>
 </div>
 
@@ -488,8 +496,7 @@
   let computedObligationDate = new Date();
 
   function initDefaults() {
-    const today = new Date();
-    document.getElementById('outflowDate').value = today.toISOString().split('T')[0];
+    // Left intentionally blank so the hardcoded HTML default values are preserved on load
   }
 
   function updateAprilDates(dOutflow) {
@@ -498,13 +505,14 @@
     const outflowDay = dOutflow.getDate();
 
     let inflowYear = outflowYear;
-    if (outflowMonth > 3 || (outflowMonth === 3 && outflowDay > 1)) {
+    if (outflowMonth > 3 || (outflowMonth === 3 && outflowDay > 30)) {
       inflowYear = outflowYear + 1;
     }
     let obligationYear = inflowYear + 1;
 
-    computedInflowDate = new Date(inflowYear, 3, 1);
-    computedObligationDate = new Date(obligationYear, 3, 1);
+    // Use April 30th dynamically moving forward
+    computedInflowDate = new Date(inflowYear, 3, 30);
+    computedObligationDate = new Date(obligationYear, 3, 30);
 
     const formatDate = (date) => {
       return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
@@ -590,6 +598,7 @@
     // 2. Net Profit & Return Rates
     const netProfit = finalInflowValue - totalCommitted;
     const returnRate = totalCommitted > 0 ? (netProfit / totalCommitted) : 0;
+    const annualizedReturnRate = daysInflow > 0 ? (Math.pow(1 + returnRate, 365 / daysInflow) - 1) : 0;
 
     // Gross Pre-Tax Equivalent Return Rate
     const grossEqRate = taxRate < 1 ? (returnRate / (1 - taxRate)) : 0;
@@ -600,6 +609,7 @@
     document.getElementById('totalCommittedVal').innerText = formatCurrency(totalCommitted);
     document.getElementById('netProfitVal').innerText = formatCurrency(netProfit);
     document.getElementById('returnRateVal').innerText = `${(returnRate * 100).toFixed(2)}%`;
+    document.getElementById('annualizedReturnVal').innerText = `${(annualizedReturnRate * 100).toFixed(2)}%`;
     document.getElementById('grossEqRateVal').innerText = `${(grossEqRate * 100).toFixed(2)}%`;
   }
 
