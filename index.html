@@ -241,9 +241,8 @@
   <div class="card explanation-card">
     <h2>Why We Use XIRR</h2>
     <p class="xirr-text"><strong>What it is:</strong> XIRR (eXtended Internal Rate of Return) is the single annualized rate that makes the present value of every dated cash flow equal to zero. In plain terms, it answers: <em>“what constant yearly return would produce this exact set of payments on these exact dates?”</em></p>
-    <p class="xirr-text"><strong>Why we use it:</strong> This strategy’s cash flows don't fall on clean annual boundaries — money goes out on day 1, comes back ~6 months later, and a funded obligation settles ~2 years out. A simple cash-on-cash return (profit ÷ outlay) ignores timing, so it can't fairly compare a 192-day deal to a 365-day deal. XIRR weights every dollar by the exact day it moves, which is the only objective way to annualize an irregular cash-flow strategy.</p>
+    <p class="xirr-text"><strong>Why we use it:</strong> This strategy’s cash flows don't fall on clean annual boundaries — money goes out on day 1, comes back ~6 months later, and a funded obligation settles ~2 years out. A simple cash-on-cash return (profit ÷ outlay) ignores timing, so it can't fairly compare a 192-day deal to a 365-day deal. XIRR weights every dollar by the exact day it moves. The Y2 obligation is brought to net present value in Year 1 to avoid spikes.</p>
     <p class="xirr-text"><strong>How to read it:</strong> An XIRR of <span class="dyn-val" id="expXirrValue">0.0%</span> means the strategy compounds as if it earned that rate per year over its actual holding period — giving full credit for returning money early.</p>
-    <p class="xirr-text"><strong>Why the obligation is discounted to Year 1:</strong> the <span class="dyn-val" id="xirrObligation">$0</span> due at Year 2 isn't funded at face value. We discount it to its present value (<span class="dyn-val" id="xirrReserve">$0</span>) at the GIC rate, because that smaller amount grows — net of tax — into the full obligation by Year 2. Recognizing the liability at its present value is what removes the Year 2 spike from the XIRR.</p>
   </div>
 
 </div>
@@ -427,8 +426,6 @@
       `= (${formatCurrency(clearedCashY1)} ÷ ${formatCurrency(outlay)})^(365 ÷ ${Math.round(daysInflow)}) − 1\n` +
       `= ${(irr * 100).toFixed(2)}%`;
     document.getElementById('expXirrValue').innerText = `${(irr * 100).toFixed(2)}%`;
-    document.getElementById('xirrObligation').innerText = formatCurrency(obligation);
-    document.getElementById('xirrReserve').innerText = formatCurrency(reserveNeededY1);
   }
 
   // URL State saving
