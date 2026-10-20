@@ -79,9 +79,9 @@
     .xirr-text:last-child { margin-bottom: 0; }
     .date-tag { font-family: 'Roboto Mono', monospace; font-weight: 600; color: var(--number); }
 
-    .action-container { display: flex; justify-content: center; margin-top: 32px; }
-    .btn-action { background-color: var(--primary); color: #ffffff; border: 1px solid transparent; padding: 10px 24px; font-size: 0.9rem; font-weight: 500; border-radius: 6px; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; transition: all 0.2s ease; }
-    .btn-action:hover { background-color: var(--card-bg); color: var(--primary); border: 1px solid var(--primary); }
+    .action-container { display: flex; justify-content: center; margin-top: 16px; }
+    .btn-action { background-color: #1e3a8a; color: #ffffff; border: 1px solid transparent; padding: 10px 24px; font-size: 0.9rem; font-weight: 500; border-radius: 6px; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; transition: all 0.2s ease; }
+    .btn-action:hover { background-color: var(--card-bg); color: #1e3a8a; border: 1px solid #1e3a8a; }
 
     footer { margin-top: 32px; text-align: center; font-size: 0.8rem; color: var(--text-muted); }
 
@@ -94,6 +94,12 @@
   <header>
     <h1>Investment Calculator</h1>
     <p>Return modeling for FT investments</p>
+    <div class="action-container">
+      <button id="shareBtn" class="btn-action">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
+        <span id="shareBtnText">Share Link</span>
+      </button>
+    </div>
   </header>
 
   <div class="grid">
@@ -238,12 +244,6 @@
     <p class="xirr-text"><strong>How to read it:</strong> An XIRR of <span class="dyn-val" id="expXirrValue">0.0%</span> means the strategy compounds as if it earned that rate per year over its actual holding period — giving full credit for returning money early.</p>
   </div>
 
-  <div class="action-container">
-    <button id="shareBtn" class="btn-action">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
-      <span id="shareBtnText">Share Link</span>
-    </button>
-  </div>
 </div>
 
 <script>
