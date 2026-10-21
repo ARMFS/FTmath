@@ -107,19 +107,19 @@
     <div class="card">
       <h2>Transaction Details</h2>
 
-      <div class="section-title">1. Initial Outflow</div>
+      <div class="section-title">1. Net Cash Outlay</div>
       <div class="input-row">
         <div class="form-group"><label>Amount ($)</label><input type="text" id="outflowAmount" value="43,162.00"></div>
         <div class="form-group"><label>Outflow Date</label><input type="date" id="outflowDate" value="2026-10-20"></div>
       </div>
 
-      <div class="section-title">2. Deal Inflow</div>
+      <div class="section-title">2. Total Net Tax Benefits</div>
       <div class="input-row">
         <div class="form-group"><label>Amount ($)</label><input type="text" id="inflowAmount" value="70,589.80"></div>
         <div class="form-group"><label>Inflow Date</label><input type="date" id="inflowDate" value="2027-04-30"></div>
       </div>
 
-      <div class="section-title">3. Deferred Obligation</div>
+      <div class="section-title">3. Income tax on inclusion Y2</div>
       <div class="input-row">
         <div class="form-group"><label>Amount ($)</label><input type="text" id="obligationAmount" value="16,059.05"></div>
         <div class="form-group"><label>Obligation Date</label><input type="date" id="obligationDate" value="2028-04-30"></div>
@@ -132,7 +132,7 @@
       </div>
 
       <div class="checkbox-group">
-        <input type="checkbox" id="enableCoasting" checked>
+        <input type="checkbox" id="enableCoasting">
         <label for="enableCoasting">Re-invest cleared cash in GIC to the 1-year anniversary</label>
       </div>
     </div>
@@ -176,10 +176,6 @@
           <div class="result-value" id="fullYearIrrVal">0.0%</div>
         </div>
 
-        <div class="result-item">
-          <div class="result-label">Taxable-Equivalent Yield<small>IRR <span class="date-tag" id="teyIrr">0.0%</span> ÷ (1 − <span class="date-tag" id="teyTax">0.0%</span> tax)</small></div>
-          <div class="result-value" id="grossEqRateVal">0.0%</div>
-        </div>
       </div>
     </div>
   </div>
@@ -247,6 +243,8 @@
 
 </div>
 
+  <footer>For educational purposes only, not tax advice.</footer>
+
 <script>
   function parseNumber(val) {
     if (typeof val === 'number') return val;
@@ -254,7 +252,7 @@
   }
 
   function formatCurrency(val) {
-    return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0, maximumFractionDigits: 2 }).format(val);
+    return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(val);
   }
 
   function formatDate(d) {
@@ -350,7 +348,6 @@
       ]);
     }
 
-    const grossEq = taxRate < 1 ? (irr / (1 - taxRate)) : 0;
     const showFullYear = coasting && daysReinvested > 0;
 
     // Update Summary Card
@@ -362,9 +359,6 @@
     document.getElementById('profitY2Val').innerText = formatCurrency(profitY2);
     document.getElementById('returnY1Val').innerText = `${(returnOnCash * 100).toFixed(2)}%`;
     document.getElementById('irrVal').innerText = `${(irr * 100).toFixed(2)}%`;
-    document.getElementById('grossEqRateVal').innerText = `${(grossEq * 100).toFixed(2)}%`;
-    document.getElementById('teyIrr').innerText = `${(irr * 100).toFixed(2)}%`;
-    document.getElementById('teyTax').innerText = `${(taxRate * 100).toFixed(2)}%`;
 
     // Dates for the summary sublabels (short MM/DD/YY)
     document.getElementById('sumOutflowDate').innerText = formatDateShort(dOutflow);
